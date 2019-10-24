@@ -58,8 +58,8 @@ class AnnotatedTelemetryPipe(Pipe):
         else:
             graph_filter = GraphFilter()
             graph_filter.run(workload)
-        sub_filter_ann = SubgraphAnnotatedFilter()
-        sub_filter_ann.run(workload, telemetry_system)
+        #sub_filter_ann = SubgraphAnnotatedFilter()
+        #sub_filter_ann.run(workload, telemetry_system)
         # sub_filter_ann_filtered = SubgraphFilteredTelemetryFilter()
         # sub_filter_ann_filtered.run(workload)
         fs = FileSink()

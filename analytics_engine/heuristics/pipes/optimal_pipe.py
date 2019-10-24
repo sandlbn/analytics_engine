@@ -20,7 +20,7 @@ __email__ = "giuliana.carullo@intel.com"
 __status__ = "Development"
 
 from analytics_engine import common
-from analytics_engine.heuristics.filters.optimal_filter import OptimalFilter
+from analytics_engine.heuristics.filters.optimal_filter_cimi import OptimalFilter
 from analytics_engine.heuristics.pipes.annotated_telemetry_pipe import AnnotatedTelemetryPipe
 from analytics_engine.heuristics.sinks.file_sink import FileSink
 from analytics_engine.heuristics.sinks.mf2c.influx_sink import InfluxSink
@@ -36,16 +36,13 @@ class OptimalPipe(AnnotatedTelemetryPipe):
     :return: producing infrastructure suggestions based on optimal usage.
     """
 
-    def run(self, workload, optimal_node_type='machine'):
+    def run(self, workload, optimal_node_type='x86_64'):
         if not workload:
             raise IOError('A workload needs to be specified')
         super(OptimalPipe, self).run(workload)
-        if workload.get_latest_graph() is None:
-            return workload
         avg_filter = OptimalFilter()
         avg_filter.run(workload, optimal_node_type)
         fs = FileSink()
         fs.save(workload)
-        influx_sink = InfluxSink()
-        influx_sink.save(workload)
+
         return workload

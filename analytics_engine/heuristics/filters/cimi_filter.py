@@ -25,12 +25,12 @@ import analytics_engine.common as common
 
 LOG = common.LOG
 
-class CimiFilter(Filter):
+class OptimalFilter(Filter):
 
     def __init__(self):
         pass
 
-    def run(self, recipe):
+    def run(self, recipe, optimal_node_type='x86_64'):
         recipe_json = recipe.to_json()
         service_id = recipe_json.get('id')
         if service_id:

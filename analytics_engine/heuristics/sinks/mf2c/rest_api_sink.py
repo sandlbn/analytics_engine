@@ -93,15 +93,15 @@ def get_optimal():
     workload.add_recipe(
         int("{}{}".format(int(round(time.time())), '000000000')), recipe_bean)
     pipe_exec = OptimalPipe()
-    node_type = 'machine'
+    node_type = 'x86_64'
     try:
         workload = pipe_exec.run(workload, node_type)
     except KeyError:
         return Response('Service not ready yet, please wait or restart landscape', status=202)
-    if workload.get_latest_graph() is None and config.get('device_id') is not None:
-        return Response('Device not found', status=404)
-    if workload.get_latest_graph() is None:
-        return Response('Landscape not ready yet?', status=202)
+    #if workload.get_latest_graph() is None and config.get('device_id') is not None:
+    #    return Response('Device not found', status=404)
+    #if workload.get_latest_graph() is None:
+    #    return Response('Landscape not ready yet?', status=202)
     results = workload.get_metadata(OptimalFilter.__filter_name__)
     # return Response(results.to_json(), mimetype=MIME)
     # return Response(results.to_dict('results'), mimetype=MIME)
@@ -160,10 +160,10 @@ def refine_recipe():
     LOG.info("Retrieving Refined Recipe with url : %s", request.url)
     params = request.get_json()
     LOG.info(params)
-    LOG.info(str(params['name']))
+    LOG.info(str(params.get('name')))
     # eng = Engine()
     # eng.run('optimal', recipe['name'], recipe['ts_from'], recipe['ts_to'])
-    workload = Workload(str(params['id']), None, None)
+    workload = Workload(str(params.get('id')), None, None)
     # workload = Workload(str(params['name']), None, None)
     pipe_exec = RefineRecipePipe()
     analysis_id = params.get('analysis_id')

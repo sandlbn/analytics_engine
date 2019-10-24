@@ -22,7 +22,7 @@ __status__ = "Development"
 from analytics_engine import common
 from analytics_engine.heuristics.pipes.base import Pipe
 from analytics_engine.heuristics.sinks.mf2c.influx_sink import InfluxSink
-from analytics_engine.heuristics.filters.cimi_filter import CimiFilter
+from analytics_engine.heuristics.filters.cimi_filter import OptimalFilter
 
 LOG = common.LOG
 
@@ -51,7 +51,7 @@ class RefineRecipePipe(Pipe):
             latest_recipe = workload.get_latest_recipe()
 
             # update cimi
-            cimi_filter = CimiFilter()
+            cimi_filter = OptimalFilter()
             latest_recipe = cimi_filter.run(latest_recipe)
             cimi_filter.refine(latest_recipe)
 

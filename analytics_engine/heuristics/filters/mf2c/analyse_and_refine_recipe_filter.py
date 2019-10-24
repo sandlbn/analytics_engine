@@ -23,7 +23,7 @@ __status__ = "Development"
 from analytics_engine.heuristics.filters.optimal_filter import OptimalFilter
 from analytics_engine.data_analytics.mf2c.refine_recipe import RefineRecipe
 from analytics_engine import common
-from analytics_engine.heuristics.filters.cimi_filter import CimiFilter
+from analytics_engine.heuristics.filters.cimi_filter import OptimalFilter
 
 import time
 
@@ -46,7 +46,7 @@ class AnalyseAndRefineRecipeFilter(OptimalFilter):
         # grabbing first row
         first_row = heuristic_results.iloc[0:1, :]
         recipe = workload.get_latest_recipe()
-        cimi_filter = CimiFilter()
+        cimi_filter = OptimalFilter()
         recipe = cimi_filter.run(recipe)
         refined_recipe = RefineRecipe.refine(recipe, first_row)
         workload.add_recipe(int("{}{}".format(int(round(time.time())), '000000000')), refined_recipe)

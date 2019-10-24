@@ -28,6 +28,9 @@ import json
 LOG = common.LOG
 CIMI_URL = config.get("CIMI", "url")
 SERVICE_PATH = "/service"
+DEVICES_PATH = "/device"
+DEVICE_DYNAMIC_PATH = "/device-dynamic"
+
 HEADERS = {'slipstream-authn-info': 'internal ADMIN', 'Content-Type': 'application/json'}
 SSL_VERIFY = False
 
@@ -49,6 +52,30 @@ def get_service(service_id):
     service = _get(uri)
     return service
 
+
+def get_devices():
+    uri = CIMI_URL+DEVICES_PATH
+    devices = _get(uri)
+    if devices:
+        return devices.get("devices", [])
+    else:
+        return dict()
+
+def get_device_dynamics():
+    uri = CIMI_URL+DEVICE_DYNAMIC_PATH
+    dd = _get(uri)
+    if dd:
+        return dd.get("deviceDynamics", [])
+    else:
+        return dict()
+
+def get_device_dynamics_by_device_id(dev_id):
+    dds = get_device_dynamics()
+    for dynamics in dds:
+        if dynamics["device"]["href"] == "device/{0}".format(dev_id):
+            return dynamics
+
+    return None
 
 def update_service(service_id, service_def):
     if SERVICE_PATH not in service_id:
