@@ -197,6 +197,8 @@ class TelemetryAnnotation(object):
         :return: NetworkX Graph annotated with telemetry data
         """
         result = pandas.DataFrame()
+        if not graph:
+            return result
         for node in graph.nodes(data=True):
             node_name = InfoGraphNode.get_name(node)
             node_layer = InfoGraphNode.get_layer(node)

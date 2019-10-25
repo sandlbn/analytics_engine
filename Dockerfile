@@ -3,7 +3,7 @@
 FROM ubuntu:16.04
 LABEL maintainer="giuliana.carullo@intel.com"
 
-RUN apt-get update && apt-get install -y git python python-pandas python-pip python-dev python-pycurl libssl-dev libcurl4-openssl-dev netcat
+RUN apt-get update && apt-get install -y git curl python python-pandas python-pip python-dev python-pycurl libssl-dev libcurl4-openssl-dev netcat
 RUN pip install --upgrade pip
 # Set the working directory to /app
 WORKDIR /root/analytics_engine
