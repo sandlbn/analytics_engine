@@ -61,8 +61,6 @@ def get_optimal():
     """
     LOG.info("Retrieving Optimal with url : %s", request.url)
     recipe = request.get_json()
-    LOG.info(recipe)
-    LOG.info(str(recipe['name']))
     current_time = int(time.time())
     workload_name = 'optimal_'+str(current_time)
     # if 'ts_from' in recipe:
@@ -79,6 +77,8 @@ def get_optimal():
         ).lower().replace('-', '_')
     if recipe.get('project'):
         config['project'] = recipe['project']
+    if recipe.get('name'):
+        config['name'] = recipe['name']
     if recipe.get('sort_order'):
         config['sort_order'] = recipe['sort_order']
     if recipe.get('telemetry_filter', None) is not None:

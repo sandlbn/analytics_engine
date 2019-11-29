@@ -61,14 +61,33 @@ class OptimalFilter(Filter):
             device_id_col_name = 'mf2c_device_id'
             heuristic_results[device_id_col_name] = None
 
+        workload_name = workload_config.get('name')
+        workload_name = workload_name[8:]
+
+        service_config = cimi.get_services_by_name(workload_name)
+
+        sensors_req = service_config.get("req_resource")
+        agent_type = service_config.get("agent_type")
+        sensorsPass = True 
+        agentPass = True
         for node in cimi.get_devices():
             node_name = node.get("id").split("/")[1]
             dd = cimi.get_device_dynamics_by_device_id(node_name)
+            if not agent_type == node.get("agent_type"):
+                agentPass = False
+            
+            if sensors_req:
+                sensors = dd.get("sensors", [{}])
+                sensors_type = sensors[0].get('sensorType')
+                if sensors_type != "None":
+                    if sorted(sensors_type) != sorted(sensors_req):
+                        sensorsPass = False
+
             ip_address = dd.get("wifiAddress", "")
 
             node_type = node.get("arch")
             list_node_name = node_name
-            if node_type == optimal_node_type:
+            if node_type == optimal_node_type and sensorsPass and agentPass:
                 data = {'node_name': list_node_name,
                                                     'type': node_type,
                                                     'ipaddress': ip_address,
