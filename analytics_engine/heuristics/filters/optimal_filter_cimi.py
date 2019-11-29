@@ -66,8 +66,8 @@ class OptimalFilter(Filter):
 
         service_config = cimi.get_services_by_name(workload_name)
 
-        sensors_req = service_config.get("req_resource")
-        agent_type = service_config.get("agent_type")
+        sensors_req = service_config[0].get("req_resource")
+        agent_type = service_config[0].get("agent_type")
         sensorsPass = True 
         agentPass = True
         for node in cimi.get_devices():
