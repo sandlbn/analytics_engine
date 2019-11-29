@@ -41,6 +41,7 @@ def get_services_by_name(name):
     uri = CIMI_URL+SERVICE_PATH
     if name and len(name) > 0:
         uri = uri+'?{}'.format(_filter_url([('name', '"{}"'.format(name))]))
+        LOG.info(uri)
     services = _get(uri).get('services')
     return services
 
