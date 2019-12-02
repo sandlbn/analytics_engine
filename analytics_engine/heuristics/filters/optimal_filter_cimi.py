@@ -67,15 +67,17 @@ class OptimalFilter(Filter):
         service_config = cimi.get_services_by_name(workload_name)
         LOG.info(service_config)
 
-        sensors_req = service_config[0].get("req_resource")
-        agent_type = service_config[0].get("agent_type")
+        if len(service_config) > 0:
+            sensors_req = service_config[0].get("req_resource")
+            agent_type = service_config[0].get("agent_type")
         sensorsPass = True 
         agentPass = True
         for node in cimi.get_devices():
             node_name = node.get("id").split("/")[1]
             dd = cimi.get_device_dynamics_by_device_id(node_name)
-            if not agent_type == node.get("agent_type"):
-                agentPass = False
+            if agent_type:
+                if agent_type != node.get("agent_type"):
+                    agentPass = False
             
             if sensors_req:
                 sensors = dd.get("sensors", [{}])
