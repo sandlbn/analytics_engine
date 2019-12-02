@@ -70,6 +70,9 @@ class OptimalFilter(Filter):
         if len(service_config) > 0:
             sensors_req = service_config[0].get("req_resource")
             agent_type = service_config[0].get("agent_type")
+        else:
+            agent_type = 'normal'
+            sensors_req = []
         sensorsPass = True 
         agentPass = True
         for node in cimi.get_devices():
@@ -79,7 +82,7 @@ class OptimalFilter(Filter):
                 if agent_type != node.get("agent_type"):
                     agentPass = False
             
-            if sensors_req:
+            if len(sensors_req) > 0:
                 sensors = dd.get("sensors", [{}])
                 sensors_type = sensors[0].get('sensorType')
                 if sensors_type != "None":
