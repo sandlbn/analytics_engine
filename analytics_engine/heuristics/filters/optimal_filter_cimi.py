@@ -73,19 +73,33 @@ class OptimalFilter(Filter):
         else:
             agent_type = 'normal'
             sensors_req = []
+
+        LOG.info(agent_type)
+        LOG.info(sensors_req)
+
         sensorsPass = True 
         agentPass = True
         for node in cimi.get_devices():
+            LOG.info(node)
             node_name = node.get("id").split("/")[1]
             dd = cimi.get_device_dynamics_by_device_id(node_name)
-            if agent_type:
-                if agent_type != node.get("agent_type"):
-                    agentPass = False
+
+            LOG.info(node)
+            LOG.info(node.get("agent_type"))
+
+            if agent_type != node.get("agent_type"):
+                agentPass = False
             
             if len(sensors_req) > 0:
+                
                 sensors = dd.get("sensors", [{}])
+                LOG.info(sensors)
+
                 sensors_type = sensors[0].get('sensorType')
+                LOG.info(sensors_type)
                 if sensors_type != "None":
+                    LOG.info(sorted(sensors_type))
+                    LOG.info(sorted(sensors_req))
                     if sorted(sensors_type) != sorted(sensors_req):
                         sensorsPass = False
 
