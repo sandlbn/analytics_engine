@@ -71,6 +71,7 @@ class OptimalFilter(Filter):
             sensors_req = service_config[0].get("req_resource")
             agent_type = service_config[0].get("agent_type")
         else:
+            workload.append_metadata(self.__filter_name__, heuristic_results)
             return heuristic_results
 
         LOG.info(agent_type)
@@ -91,7 +92,7 @@ class OptimalFilter(Filter):
             if agent_type != node.get("agentType"):
                 agentPass = False
             
-            if len(sensors_req) > 0:
+            if sensors_req:
                 
                 sensors = dd.get("sensors", [{}])
                 LOG.info("sensors")
