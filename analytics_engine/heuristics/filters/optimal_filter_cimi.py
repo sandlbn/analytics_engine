@@ -71,8 +71,7 @@ class OptimalFilter(Filter):
             sensors_req = service_config[0].get("req_resource")
             agent_type = service_config[0].get("agent_type")
         else:
-            agent_type = 'normal'
-            sensors_req = []
+            return []
 
         LOG.info(agent_type)
         LOG.info(sensors_req)
