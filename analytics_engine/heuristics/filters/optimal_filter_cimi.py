@@ -105,6 +105,8 @@ class OptimalFilter(Filter):
                     LOG.info(sorted(sensors_req))
                     if sorted(sensors_type) != sorted(sensors_req):
                         sensorsPass = False
+                else:
+                    sensorsPass = False
 
             ip_address = dd.get("wifiAddress", "")
 
