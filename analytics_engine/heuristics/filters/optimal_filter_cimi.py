@@ -105,8 +105,10 @@ class OptimalFilter(Filter):
                     LOG.info(sorted(sensors_req))
                     if sorted(sensors_type) != sorted(sensors_req):
                         sensorsPass = False
+                        LOG.info("Sensors do not match requirements")
                 else:
                     sensorsPass = False
+                    LOG.info("No sensors attached to device")
 
             ip_address = dd.get("wifiAddress", "")
 
