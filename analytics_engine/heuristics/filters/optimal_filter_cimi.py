@@ -87,9 +87,9 @@ class OptimalFilter(Filter):
             LOG.info("agent_type")
             LOG.info(agent_type)
             LOG.info("Node agent type")
-            LOG.info(node.get("agent_type"))
+            LOG.info(node.get("agentType"))
 
-            if agent_type != node.get("agent_type"):
+            if agent_type != node.get("agentType"):
                 agentPass = False
             
             if len(sensors_req) > 0:
