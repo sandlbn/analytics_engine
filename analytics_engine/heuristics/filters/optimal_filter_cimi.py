@@ -84,7 +84,9 @@ class OptimalFilter(Filter):
             node_name = node.get("id").split("/")[1]
             dd = cimi.get_device_dynamics_by_device_id(node_name)
 
-            LOG.info(node)
+            LOG.info("agent_type")
+            LOG.info(agent_type)
+            LOG.info("Node agent type")
             LOG.info(node.get("agent_type"))
 
             if agent_type != node.get("agent_type"):
@@ -93,9 +95,11 @@ class OptimalFilter(Filter):
             if len(sensors_req) > 0:
                 
                 sensors = dd.get("sensors", [{}])
+                LOG.info("sensors")
                 LOG.info(sensors)
 
                 sensors_type = sensors[0].get('sensorType')
+                LOG.info("sensors_type")
                 LOG.info(sensors_type)
                 if sensors_type != "None":
                     LOG.info(sorted(sensors_type))
