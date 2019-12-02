@@ -62,9 +62,10 @@ class OptimalFilter(Filter):
             heuristic_results[device_id_col_name] = None
 
         workload_name = workload_config.get('name')
-        workload_name = workload_name[8:]
+        #workload_name = workload_name[8:]
 
         service_config = cimi.get_services_by_name(workload_name)
+        LOG.info(service_config)
 
         sensors_req = service_config[0].get("req_resource")
         agent_type = service_config[0].get("agent_type")
