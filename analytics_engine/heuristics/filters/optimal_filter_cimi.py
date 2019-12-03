@@ -64,7 +64,6 @@ class OptimalFilter(Filter):
         workload_name = workload_config.get('name')
 
         service_config = cimi.get_services_by_name(workload_name)
-        LOG.info(service_config)
 
         if len(service_config) > 0:
             sensors_req = service_config[0].get("req_resource")
@@ -74,9 +73,6 @@ class OptimalFilter(Filter):
                 "No service definition for {0} in service catalog".format(0))
             workload.append_metadata(self.__filter_name__, heuristic_results)
             return heuristic_results
-
-        LOG.info(agent_type)
-        LOG.info(sensors_req)
 
         sensorsPass = True
         agentPass = True
