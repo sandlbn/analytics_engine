@@ -45,7 +45,7 @@ class OptimalFilter(Filter):
 
         scores = CimiScore.utilization_scores(devices)
         scores_sat = CimiScore.saturation_scores(devices)
-        heuristic_results = pd.DataFrame(columns=['node_name', 'type', 'ipaddress', 
+        heuristic_results = pd.DataFrame(columns=['node_name', 'type', 'ipaddress',
                                                   'compute utilization', 'compute saturation',
                                                   'memory utilization', 'memory saturation',
                                                   'network utilization', 'network saturation',
@@ -62,7 +62,6 @@ class OptimalFilter(Filter):
             heuristic_results[device_id_col_name] = None
 
         workload_name = workload_config.get('name')
-        #workload_name = workload_name[8:]
 
         service_config = cimi.get_services_by_name(workload_name)
         LOG.info(service_config)
@@ -71,45 +70,41 @@ class OptimalFilter(Filter):
             sensors_req = service_config[0].get("req_resource")
             agent_type = service_config[0].get("agent_type")
         else:
+            LOG.info(
+                "No service definition for {0} in service catalog".format(0))
             workload.append_metadata(self.__filter_name__, heuristic_results)
             return heuristic_results
 
         LOG.info(agent_type)
         LOG.info(sensors_req)
 
-        sensorsPass = True 
+        sensorsPass = True
         agentPass = True
         for node in cimi.get_devices():
-            LOG.info(node)
             node_name = node.get("id").split("/")[1]
             dd = cimi.get_device_dynamics_by_device_id(node_name)
 
-            LOG.info("agent_type")
-            LOG.info(agent_type)
-            LOG.info("Node agent type")
-            LOG.info(node.get("agentType"))
-
             if agent_type != node.get("agentType"):
+                msg = "Node name {0} is type of {1}. Service definition {2} requires node of type {3}".format(
+                    node_name, node.get("agentType"), workload_name, agent_type)
+                LOG.info(msg)
                 agentPass = False
-            
-            if sensors_req:
-                
-                sensors = dd.get("sensors", [{}])
-                LOG.info("sensors")
-                LOG.info(sensors)
 
+            if sensors_req:
+                sensors = dd.get("sensors", [{}])
                 sensors_type = sensors[0].get('sensorType')
-                LOG.info("sensors_type")
-                LOG.info(sensors_type)
+                msg_sensors = ', '.join([str(elem) for elem in sensors_req])
+
                 if sensors_type != "None":
-                    LOG.info(sorted(sensors_type))
-                    LOG.info(sorted(sensors_req))
                     if sorted(sensors_type) != sorted(sensors_req):
                         sensorsPass = False
-                        LOG.info("Sensors do not match requirements")
+                        msg = "Sensors do not match requirements. Service {0} requires sensors {1}".format(
+                            workload_name, msg_sensors)
+                        LOG.info(msg)
                 else:
                     sensorsPass = False
-                    LOG.info("No sensors attached to device")
+                    LOG.info("No sensors attached to device. Service {0} requires sensors {1}".format(
+                        workload_name, msg_sensors))
 
             ip_address = dd.get("wifiAddress", "")
 
@@ -117,20 +112,21 @@ class OptimalFilter(Filter):
             list_node_name = node_name
             if node_type == optimal_node_type and sensorsPass and agentPass:
                 data = {'node_name': list_node_name,
-                                                    'type': node_type,
-                                                    'ipaddress': ip_address,
-                                                    'compute utilization': scores[node_name]['compute'],
-                                                    'compute saturation': scores_sat[node_name]['compute'],
-                                                    'memory utilization': scores[node_name]['memory'],
-                                                    'memory saturation': scores_sat[node_name]['memory'],
-                                                    'network utilization': scores[node_name]['network'],
-                                                    'network saturation': scores_sat[node_name]['network'],
-                                                    'disk utilization': scores[node_name]['disk'],
-                                                    'disk saturation': scores_sat[node_name]['disk']}
-                
+                        'type': node_type,
+                        'ipaddress': ip_address,
+                        'compute utilization': scores[node_name]['compute'],
+                        'compute saturation': scores_sat[node_name]['compute'],
+                        'memory utilization': scores[node_name]['memory'],
+                        'memory saturation': scores_sat[node_name]['memory'],
+                        'network utilization': scores[node_name]['network'],
+                        'network saturation': scores_sat[node_name]['network'],
+                        'disk utilization': scores[node_name]['disk'],
+                        'disk saturation': scores_sat[node_name]['disk']}
+
                 data[device_id_col_name] = node_name
-                
-                heuristic_results = heuristic_results.append(data, ignore_index=True)
+
+                heuristic_results = heuristic_results.append(
+                    data, ignore_index=True)
 
         sort_fields = ['compute utilization']
         sort_order = workload_config.get('sort_order')
@@ -146,12 +142,10 @@ class OptimalFilter(Filter):
                 if val == 'disk':
                     sort_fields.append('disk utilization')
         heuristic_results_nt = heuristic_results_nt.replace([0], [None])
-        heuristic_results = heuristic_results.sort_values(by=sort_fields, ascending=True)
-        heuristic_results = heuristic_results.append(heuristic_results_nt, ignore_index=True)
+        heuristic_results = heuristic_results.sort_values(
+            by=sort_fields, ascending=True)
+        heuristic_results = heuristic_results.append(
+            heuristic_results_nt, ignore_index=True)
         workload.append_metadata(self.__filter_name__, heuristic_results)
         LOG.info('AVG: {}'.format(heuristic_results))
         return heuristic_results
-
-
-
-
