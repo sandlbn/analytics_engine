@@ -40,7 +40,6 @@ class OptimalFilter(Filter):
         :return: heuristic results
         """
         workload_config = workload.get_configuration()
-
         devices = cimi.get_devices()
 
         scores = CimiScore.utilization_scores(devices)
@@ -74,17 +73,20 @@ class OptimalFilter(Filter):
             workload.append_metadata(self.__filter_name__, heuristic_results)
             return heuristic_results
 
-        sensorsPass = True
-        agentPass = True
         for node in cimi.get_devices():
+            sensorsPass = True
+            agentPass = True
             node_name = node.get("id").split("/")[1]
             dd = cimi.get_device_dynamics_by_device_id(node_name)
-
             if agent_type != node.get("agentType"):
                 msg = "Node name {0} is type of {1}. Service definition {2} requires node of type {3}".format(
                     node_name, node.get("agentType"), workload_name, agent_type)
                 LOG.info(msg)
                 agentPass = False
+            else:
+                msg = "Node name {0} is type of {1}. Service definition {2} requires node of type {3}".format(
+                    node_name, node.get("agentType"), workload_name, agent_type)
+                LOG.info(msg)
 
             if sensors_req:
                 sensors = dd.get("sensors", [{}])
@@ -92,7 +94,7 @@ class OptimalFilter(Filter):
                 msg_sensors = ', '.join([str(elem) for elem in sensors_req])
 
                 if sensors_type != "None":
-                    if sorted(sensors_type) != sorted(sensors_req):
+                    if all(elem in sensors_type  for elem in sensors_req) == False:
                         sensorsPass = False
                         msg = "Sensors do not match requirements. Service {0} requires sensors {1}".format(
                             workload_name, msg_sensors)
@@ -106,7 +108,7 @@ class OptimalFilter(Filter):
 
             node_type = node.get("arch")
             list_node_name = node_name
-            if node_type == optimal_node_type and sensorsPass and agentPass:
+            if sensorsPass and agentPass:
                 data = {'node_name': list_node_name,
                         'type': node_type,
                         'ipaddress': ip_address,
@@ -118,7 +120,7 @@ class OptimalFilter(Filter):
                         'network saturation': scores_sat[node_name]['network'],
                         'disk utilization': scores[node_name]['disk'],
                         'disk saturation': scores_sat[node_name]['disk']}
-
+            
                 data[device_id_col_name] = node_name
 
                 heuristic_results = heuristic_results.append(
@@ -137,9 +139,13 @@ class OptimalFilter(Filter):
                     sort_fields.append('network utilization')
                 if val == 'disk':
                     sort_fields.append('disk utilization')
+
         heuristic_results_nt = heuristic_results_nt.replace([0], [None])
-        heuristic_results = heuristic_results.sort_values(
-            by=sort_fields, ascending=True)
+        try:
+            heuristic_results = heuristic_results.sort_values(
+                by=sort_fields, ascending=True)
+        except IndexError:
+            pass
         heuristic_results = heuristic_results.append(
             heuristic_results_nt, ignore_index=True)
         workload.append_metadata(self.__filter_name__, heuristic_results)
