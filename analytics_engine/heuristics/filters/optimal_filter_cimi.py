@@ -89,22 +89,28 @@ class OptimalFilter(Filter):
                 LOG.info(msg)
 
             if sensors_req:
-                sensors = dd.get("sensors", [{}])
-                sensors_type = sensors[0].get('sensorType')
-                msg_sensors = ', '.join([str(elem) for elem in sensors_req])
+                try:
+                    sensors = dd.get("sensors", [{}])
+                    sensors_type = sensors[0].get('sensorType')
+                    msg_sensors = ', '.join([str(elem) for elem in sensors_req])
 
-                if sensors_type != "None":
-                    if all(elem in sensors_type  for elem in sensors_req) == False:
+                    if sensors_type != "None":
+                        if all(elem in sensors_type  for elem in sensors_req) == False:
+                            sensorsPass = False
+                            msg = "Sensors do not match requirements. Service {0} requires sensors {1}".format(
+                                workload_name, msg_sensors)
+                            LOG.info(msg)
+                    else:
                         sensorsPass = False
-                        msg = "Sensors do not match requirements. Service {0} requires sensors {1}".format(
-                            workload_name, msg_sensors)
-                        LOG.info(msg)
-                else:
-                    sensorsPass = False
-                    LOG.info("No sensors attached to device. Service {0} requires sensors {1}".format(
-                        workload_name, msg_sensors))
-
-            ip_address = dd.get("wifiAddress", "")
+                        LOG.info("No sensors attached to device. Service {0} requires sensors {1}".format(
+                            workload_name, msg_sensors))
+                except AttributeError:
+                    LOG.error("No sensor data present")
+            try:
+                ip_address = dd.get("wifiAddress", "")
+            except AttributeError:
+                LOG.error("No wifi data present")
+                ip_address = ""
 
             node_type = node.get("arch")
             list_node_name = node_name
