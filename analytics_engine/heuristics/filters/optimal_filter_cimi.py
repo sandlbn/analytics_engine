@@ -107,6 +107,7 @@ class OptimalFilter(Filter):
                             workload_name, msg_sensors))
                 except AttributeError:
                     LOG.error("No sensor data present")
+                    sensorsPass = False
             try:
                 ip_address = dd.get("wifiAddress", "")
             except AttributeError:
