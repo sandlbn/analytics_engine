@@ -50,6 +50,12 @@ class CimiScore(object):
                 res[dev_id]['compute'] = round(float(dynamics.get("cpuFreePercent", 0)),1)
                 res[dev_id]['disk'] = round(float(dynamics.get("storageFreePercent", 0)),1)
                 res[dev_id]['network'] = 0
+            else:
+                res[dev_id] = dict()
+                res[dev_id]['memory']= 0
+                res[dev_id]['compute'] = 0
+                res[dev_id]['disk'] = 0
+                res[dev_id]['network'] = 0
 
         return res
 
