@@ -92,10 +92,11 @@ class OptimalFilter(Filter):
                 try:
                     sensors = dd.get("sensors", [{}])
                     sensors_type = sensors[0].get('sensorType')
-                    msg_sensors = ', '.join([str(elem) for elem in sensors_req])
+                    msg_sensors = ', '.join([str(elem)
+                                             for elem in sensors_req])
 
                     if sensors_type != "None":
-                        if all(elem in sensors_type  for elem in sensors_req) == False:
+                        if all(elem in sensors_type for elem in sensors_req) == False:
                             sensorsPass = False
                             msg = "Sensors do not match requirements. Service {0} requires sensors {1}".format(
                                 workload_name, msg_sensors)
@@ -126,7 +127,7 @@ class OptimalFilter(Filter):
                         'network saturation': scores_sat[node_name]['network'],
                         'disk utilization': scores[node_name]['disk'],
                         'disk saturation': scores_sat[node_name]['disk']}
-            
+
                 data[device_id_col_name] = node_name
 
                 heuristic_results = heuristic_results.append(
